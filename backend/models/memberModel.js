@@ -41,6 +41,13 @@ const memberSchema =mongoose.Schema({
     address:{
         type:String,
         required:true
+    },
+    rfid:{
+        type:Number,
+        required:true
+    },
+    lastEntry:{
+        type:Date
     }
 },{timeStamps:true})
 
