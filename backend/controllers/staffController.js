@@ -74,6 +74,7 @@ const updateStaff=asyncHandler(async(req,res)=>{
         staff.address=req.body.address || staff.address
         staff.joiningDate=req.body.joiningDate || staff.joiningDate
         staff.city=req.body.city||staff.city
+        staff.rfid=req.body.rfid || staff.rfid
 
         const updatedStaff=await staff.save()
         res.json(updatedStaff)

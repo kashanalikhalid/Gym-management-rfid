@@ -43,7 +43,7 @@ const memberSchema =mongoose.Schema({
         required:true
     },
     rfid:{
-        type:Number,
+        type:String,
         required:true
     },
     lastEntry:{

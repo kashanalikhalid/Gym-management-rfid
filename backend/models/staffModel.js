@@ -25,6 +25,10 @@ const staffSchema =mongoose.Schema({
         type:Date,
         required:true
     },
+    rfid:{
+        type:String,
+        required:true
+    }
 })
 
 const Staff =mongoose.model('Staff',staffSchema)

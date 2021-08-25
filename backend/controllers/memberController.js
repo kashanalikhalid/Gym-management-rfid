@@ -78,6 +78,7 @@ const updateMember=asyncHandler(async(req,res)=>{
         member.feeDate=req.body.feeDate||member.feeDate
         member.registration=req.body.registration||member.registration
         member.membership=req.body.membership||member.membership
+        member.rfid=req.body.rfid || member.rfid
 
         const updatedMember=await member.save()
     res.json(updatedMember)
