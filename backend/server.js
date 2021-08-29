@@ -16,12 +16,7 @@ let corsOptions ={
 }
 
 const app =express()
-app.use(cors({
-    origin : true,
-    credentials: true,
-    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
-    optionsSuccessStatus : 200
-}));
+app.use(cors());
 
 app.use(express.json({limit: '50mb'}));
 app.use(bodyParser.json());
