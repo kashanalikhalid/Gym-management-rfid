@@ -7,9 +7,21 @@ import staffRoutes from "./routes/admin/staffRoutes.js"
 
 
 import bodyParser from 'body-parser'
-
+import cors from "cors";
+let corsOptions ={
+    origin : true,
+    credentials: true,
+    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+    optionsSuccessStatus : 200
+}
 
 const app =express()
+app.use(cors({
+    origin : true,
+    credentials: true,
+    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+    optionsSuccessStatus : 200
+}));
 
 app.use(express.json({limit: '50mb'}));
 app.use(bodyParser.json());
