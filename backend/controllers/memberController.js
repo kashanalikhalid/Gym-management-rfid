@@ -67,6 +67,7 @@ const memberCount=asyncHandler (async(req,res)=>{
 
 const updateMember=asyncHandler(async(req,res)=>{
     const member= await Member.findById(req.params.id)
+    console.log(req.body.discount)
     if(member)
     {
         member.contact=req.body.contact||member.contact
@@ -83,7 +84,7 @@ const updateMember=asyncHandler(async(req,res)=>{
         member.months=req.body.months||member.months
         member.group=req.body.group||member.group
         member.training=req.body.training
-        member.discount=req.body.discount||member.discount
+        member.discount=req.body.discount
 
         const updatedMember=await member.save()
     res.json(updatedMember)
