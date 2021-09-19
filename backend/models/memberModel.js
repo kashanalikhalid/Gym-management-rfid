@@ -14,10 +14,6 @@ const memberSchema =mongoose.Schema({
         type:Number,
         required:true
     },
-    registration:{
-        type:String,
-        required:true
-    },
     city:{
         type:String,
         required:true
@@ -47,7 +43,29 @@ const memberSchema =mongoose.Schema({
         required:true
     },
     lastEntry:{
-        type:Date
+        type:Date,
+        default:null
+    },
+    group:{
+        type:Number,
+        required:true
+    },
+    months:{
+        type:Number,
+        required:true
+    },
+    training:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
+    discount:{
+        type:Number,
+        required:true
+    },
+    gender:{
+        type:String,
+        required:true
     }
 },{timeStamps:true})
 

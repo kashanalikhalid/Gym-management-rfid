@@ -2,8 +2,18 @@ import dotenv from 'dotenv'
 import connectDB from "./config/db.js";
 import express from 'express'
 import {notFound, errorHandler} from "./middleware/errorMiddleware.js";
+import SerialPort from 'serialport'
+let serialPort = new SerialPort("COM4", { baudRate: 9600 });
+
+serialPort.on('open',function() {
+    console.log('Serial Port ' + "COM4" + ' is opened.');
+});
+
 import memberRoutes from "./routes/admin/memberRoutes.js";
 import staffRoutes from "./routes/admin/staffRoutes.js"
+import rfidRoutes from "./routes/admin/rfidRoutes.js"
+import attendanceRoutes from "./routes/admin/attendanceRoutes.js"
+
 
 
 import bodyParser from 'body-parser'
@@ -29,8 +39,26 @@ app.get('/',(req,res)=>{
 res.send('API is running')
 })
 
+app.get('/:action',(req,res)=>{
+    let action = req.params.action
+
+    if(action === 'on'){
+        serialPort.write("w");
+        return res.send('Led light is on!');
+    }
+
+    if(action === 'off'){
+        serialPort.write("t");
+        return res.send('Led light is off!');
+    }
+
+    res.send('API is running')
+})
+
 app.use('/admin',memberRoutes)
 app.use('/admin',staffRoutes)
+app.use('/admin',rfidRoutes)
+app.use('/admin',attendanceRoutes)
 
 
 

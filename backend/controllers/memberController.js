@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Member from '../models/memberModel.js'
+import Attendance from '../models/attendanceModel.js'
 
 const addMember =asyncHandler(async(req,res)=>{
     const data=req.body;
@@ -79,6 +80,10 @@ const updateMember=asyncHandler(async(req,res)=>{
         member.registration=req.body.registration||member.registration
         member.membership=req.body.membership||member.membership
         member.rfid=req.body.rfid || member.rfid
+        member.months=req.body.months||member.months
+        member.group=req.body.group||member.group
+        member.training=req.body.training
+        member.discount=req.body.discount||member.discount
 
         const updatedMember=await member.save()
     res.json(updatedMember)
@@ -89,4 +94,13 @@ const updateMember=asyncHandler(async(req,res)=>{
     }
 })
 
-export {addMember,memberCount,memberList,getMember,deleteMember,updateMember}
+const addAttendance =asyncHandler(async(req,res)=>{
+    const data=req.body;
+    const attendance= new Attendance(data)
+    const createdAttendance =await attendance.save();
+    res.status(201).json(createdAttendance);
+
+})
+
+
+export {addMember,memberCount,memberList,getMember,deleteMember,updateMember,addAttendance}
