@@ -34,6 +34,7 @@ const deleteRfid=asyncHandler(async(req,res)=>{
 
 
 const updateRfid=asyncHandler(async(req,res)=>{
+    console.log(req.params.rfid)
     let rfid= await Rfid.findOne({rfid:req.params.rfid})
     if(rfid)
     {
