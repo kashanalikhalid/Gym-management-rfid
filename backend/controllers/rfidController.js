@@ -34,15 +34,7 @@ const deleteRfid=asyncHandler(async(req,res)=>{
 
 
 const updateRfid=asyncHandler(async(req,res)=>{
-    const keyword = req.query.rfid
-        ? {
-            rfid: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
-        }
-        : {}
-    let rfid= await Rfid.findOne({...keyword})
+    let rfid= await Rfid.findOne({rfid:req.params.rfid})
     if(rfid)
     {
         rfid.rfid=req.body.rfid||rfid.rfid
