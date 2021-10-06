@@ -13,15 +13,7 @@ const addRfid =asyncHandler(async(req,res)=>{
 
 
 const deleteRfid=asyncHandler(async(req,res)=>{
-    const keyword = req.query.rfid
-        ? {
-            rfid: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
-        }
-        : {}
-    const rfid=await Rfid.findOne({...keyword})
+    let rfid= await Rfid.findOne({rfid:req.params.rfid})
     if(rfid)
     {
         await rfid.remove()
@@ -34,7 +26,6 @@ const deleteRfid=asyncHandler(async(req,res)=>{
 
 
 const updateRfid=asyncHandler(async(req,res)=>{
-    console.log(req.params.rfid)
     let rfid= await Rfid.findOne({rfid:req.params.rfid})
     if(rfid)
     {
@@ -69,7 +60,7 @@ function diff_hours(dt2, dt1)
 const verifyRfid =asyncHandler(async(req,res)=>{
     let rfid= await Rfid.findOne({rfid:req.params.rfid})
     if(rfid) {
-
+        console.log(rfid)
         if (rfid.type === "member") {
             const member = await Member.findOne({rfid:req.params.rfid})
             const returnMember = {...member._doc};

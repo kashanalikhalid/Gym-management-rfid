@@ -17,16 +17,16 @@ import attendanceRoutes from "./routes/admin/attendanceRoutes.js"
 
 
 import bodyParser from 'body-parser'
-import cors from "cors";
-let corsOptions ={
-    origin : true,
-    credentials: true,
-    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
-    optionsSuccessStatus : 200
-}
+    import cors from "cors";
+    let corsOptions ={
+        origin : true,
+        credentials: true,
+        exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+        optionsSuccessStatus : 200
+    }
 
-const app =express()
-app.use(cors());
+    const app =express()
+    app.use(cors());
 
 app.use(express.json({limit: '50mb'}));
 app.use(bodyParser.json());
@@ -44,11 +44,13 @@ app.get('/:action',(req,res)=>{
 
     if(action === 'on'){
         serialPort.write("w");
-        return res.send('Led light is on!');
+        console.log("lock is closed")
+        return res.send('Led light is closed!');
     }
 
     if(action === 'off'){
         serialPort.write("t");
+        console.log("lock is open")
         return res.send('Led light is off!');
     }
 
