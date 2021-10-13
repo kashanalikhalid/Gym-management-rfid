@@ -31,6 +31,94 @@ const memberList=asyncHandler(async(req,res)=>{
     res.json({ members, page, pages: Math.ceil(count / pageSize) })
 })
 
+const memberTraining=asyncHandler(async(req,res)=>{
+    const pageSize=10;
+    const page = Number(req.query.page) || 1
+    const keyword = req.query.search
+        ? {
+            name: {
+                $regex: req.query.search,
+                $options: 'i',
+            },
+            training:true,
+        }
+        : {training:true}
+
+    const count= await Member.countDocuments({...keyword})
+    const members=await Member.find({...keyword})
+    .limit(pageSize)
+    .skip(pageSize*(page-1))
+
+    res.json({ members, page, pages: Math.ceil(count / pageSize) })
+})
+
+
+const memberCardio=asyncHandler(async(req,res)=>{
+    const pageSize=10;
+    const page = Number(req.query.page) || 1
+    const keyword = req.query.search
+        ? {
+            name: {
+                $regex: req.query.search,
+                $options: 'i',
+            },
+            membership:"Cardio",
+        }
+        : {membership:"Cardio"}
+
+    const count= await Member.countDocuments({...keyword})
+    const members=await Member.find({...keyword})
+    .limit(pageSize)
+    .skip(pageSize*(page-1))
+
+    res.json({ members, page, pages: Math.ceil(count / pageSize) })
+})
+
+
+const memberWeight=asyncHandler(async(req,res)=>{
+    const pageSize=10;
+    const page = Number(req.query.page) || 1
+    const keyword = req.query.search
+        ? {
+            name: {
+                $regex: req.query.search,
+                $options: 'i',
+            },
+            membership:"Weight Training",
+        }
+        : {membership:"Weight Training"}
+
+    const count= await Member.countDocuments({...keyword})
+    const members=await Member.find({...keyword})
+    .limit(pageSize)
+    .skip(pageSize*(page-1))
+
+    res.json({ members, page, pages: Math.ceil(count / pageSize) })
+})
+
+
+const memberCardioWeight=asyncHandler(async(req,res)=>{
+    const pageSize=10;
+    const page = Number(req.query.page) || 1
+    const keyword = req.query.search
+        ? {
+            name: {
+                $regex: req.query.search,
+                $options: 'i',
+            },
+            membership:"Cardio and weight Training",
+        }
+        : {membership:"Cardio and weight Training"}
+
+    const count= await Member.countDocuments({...keyword})
+    const members=await Member.find({...keyword})
+    .limit(pageSize)
+    .skip(pageSize*(page-1))
+
+    res.json({ members, page, pages: Math.ceil(count / pageSize) })
+})
+
+
 
 
 const deleteMember=asyncHandler(async(req,res)=>{
@@ -62,7 +150,11 @@ const getMember=asyncHandler(async(req,res)=>{
 
 const memberCount=asyncHandler (async(req,res)=>{
     const count= await Member.countDocuments({})
-    res.json({count})
+    const training= await Member.countDocuments({training:true})
+    const cardio= await Member.countDocuments({membership:"Cardio"})
+    const strength= await Member.countDocuments({membership:"Weight Training"})
+    const strengthCardio= await Member.countDocuments({membership:"Cardio and weight Training"})
+    res.json({count,training,cardio,strength,strengthCardio})
 })
 
 const updateMember=asyncHandler(async(req,res)=>{
@@ -104,4 +196,13 @@ const addAttendance =asyncHandler(async(req,res)=>{
 })
 
 
-export {addMember,memberCount,memberList,getMember,deleteMember,updateMember,addAttendance}
+const allMembers =asyncHandler(async(req,res)=>{
+    const members=await Member.find({})
+    res.status(201).json(members);
+
+})
+
+
+
+
+export {addMember,memberCount,memberList,getMember,deleteMember,updateMember,addAttendance,memberTraining,memberCardio,memberWeight,memberCardioWeight,allMembers}
