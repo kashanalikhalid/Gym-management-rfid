@@ -177,6 +177,7 @@ const updateMember=asyncHandler(async(req,res)=>{
         member.group=req.body.group||member.group
         member.training=req.body.training
         member.discount=req.body.discount
+        member.trainingFee=req.body.trainingFee||member.trainingFee
 
         const updatedMember=await member.save()
     res.json(updatedMember)

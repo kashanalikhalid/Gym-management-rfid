@@ -66,6 +66,10 @@ const memberSchema =mongoose.Schema({
     gender:{
         type:String,
         required:true
+    },
+    trainingFee:{
+        type:Number,
+        default:0
     }
 },{timeStamps:true})
 
