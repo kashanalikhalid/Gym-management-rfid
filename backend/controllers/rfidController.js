@@ -81,7 +81,6 @@ const verifyRfid =asyncHandler(async(req,res)=>{
                     member.lastEntry = date;
                     returnMember.allowed=true;
                 } else if (hours > 2) {
-                    member.lastEntry = date;
                     returnMember.allowed=false;
                     returnMember.reason="time"
                 }
