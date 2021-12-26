@@ -14,7 +14,7 @@ const feeSchema =mongoose.Schema({
         required:true
     },
     date:{
-        type:Number,
+        type:String,
         required:true,
     }
 },{timeStamps:true})

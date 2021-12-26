@@ -3,6 +3,12 @@ import Member from '../models/memberModel.js'
 import Attendance from '../models/attendanceModel.js'
 import Fee from '../models/feeModel.js'
 
+const getFormattedDate=(date)=>{
+    let newDate=new Date(date)
+    return ` ${newDate.getDate()}-${newDate.getMonth()+1}-${newDate.getFullYear()}`
+
+}
+
 const addMember =asyncHandler(async(req,res)=>{
     let data=req.body;
     let member= new Member(data)
@@ -11,7 +17,7 @@ const addMember =asyncHandler(async(req,res)=>{
         member:member._id,
         name:member.name,
         amount:member.fee+member.trainingFee,
-        date:member.feeDate
+        date:getFormattedDate(member.feeDate)
     }
     let fee=await new Fee(data)
     fee= await fee.save()
@@ -170,13 +176,13 @@ const updateMember=asyncHandler(async(req,res)=>{
     const member= await Member.findById(req.params.id)
     if(req.params.feeDate)
     {
-        if(member.feeDate!=req.params.feeDate)
+        if(getFormattedDate(member.feeDate)!=getFormattedDate(req.params.feeDate))
         {
             let data={
             member:member._id,
             name:member.name,
             amount:member.fee+member.trainingFee,
-            date:member.feeDate
+            date:getFormattedDate(member.feeDate)
         }
             let fee=await new Fee(data)
             fee= await fee.save()
