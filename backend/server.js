@@ -13,6 +13,7 @@ import memberRoutes from "./routes/admin/memberRoutes.js";
 import staffRoutes from "./routes/admin/staffRoutes.js"
 import rfidRoutes from "./routes/admin/rfidRoutes.js"
 import attendanceRoutes from "./routes/admin/attendanceRoutes.js"
+import feeRoutes from "./routes/admin/feeRoutes.js";
 
 
 
@@ -61,6 +62,7 @@ app.use('/admin',memberRoutes)
 app.use('/admin',staffRoutes)
 app.use('/admin',rfidRoutes)
 app.use('/admin',attendanceRoutes)
+app.use('/admin',feeRoutes)
 
 
 

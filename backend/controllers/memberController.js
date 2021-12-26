@@ -1,12 +1,21 @@
 import asyncHandler from "express-async-handler";
 import Member from '../models/memberModel.js'
 import Attendance from '../models/attendanceModel.js'
+import Fee from '../models/feeModel.js'
 
 const addMember =asyncHandler(async(req,res)=>{
-    const data=req.body;
-    const member= new Member(data)
-    const createdMember=await member.save();
-    res.status(201).json(createdMember);
+    let data=req.body;
+    let member= new Member(data)
+     member=await member.save();
+     data={
+        member:member._id,
+        name:member.name,
+        amount:member.fee+member.trainingFee,
+        date:member.feeDate
+    }
+    let fee=await new Fee(data)
+    fee= await fee.save()
+    res.status(201).json(member);
 
 })
 
@@ -159,7 +168,20 @@ const memberCount=asyncHandler (async(req,res)=>{
 
 const updateMember=asyncHandler(async(req,res)=>{
     const member= await Member.findById(req.params.id)
-    console.log(req.body.discount)
+    if(req.params.feeDate)
+    {
+        if(member.feeDate!=req.params.feeDate)
+        {
+            let data={
+            member:member._id,
+            name:member.name,
+            amount:member.fee+member.trainingFee,
+            date:member.feeDate
+        }
+            let fee=await new Fee(data)
+            fee= await fee.save()
+        }
+    }
     if(member)
     {
         member.contact=req.body.contact||member.contact
