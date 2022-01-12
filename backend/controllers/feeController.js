@@ -18,7 +18,7 @@ const feeList=asyncHandler(async(req,res)=>{
 
     const count= await Fee.countDocuments({...keyword})
     const fees=await Fee.find({...keyword})
-    .sort( { 'timestamp': -1 } )
+    .sort( { 'timestamp': 1 } )
     .limit(pageSize)
     .skip(pageSize*(page-1))
 
