@@ -184,7 +184,7 @@ const updateMember=asyncHandler(async(req,res)=>{
             let data={
             member:member._id,
             name:member.name,
-            amount:member.fee+member.trainingFee,
+            amount:member.fee,
             date:getFormattedDate(req.body.feeDate),
         }
             let fee=await new Fee(data)
