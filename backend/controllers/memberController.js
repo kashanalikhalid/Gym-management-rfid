@@ -13,14 +13,6 @@ const addMember =asyncHandler(async(req,res)=>{
     let data=req.body;
     let member= new Member(data)
      member=await member.save();
-     data={
-        member:member._id,
-        name:member.name,
-        amount:member.fee+member.trainingFee,
-        date:getFormattedDate(member.feeDate)
-    }
-    let fee=await new Fee(data)
-    fee= await fee.save()
     res.status(201).json(member);
 
 })
@@ -29,14 +21,29 @@ const addMember =asyncHandler(async(req,res)=>{
 const memberList=asyncHandler(async(req,res)=>{
     const pageSize=10;
     const page = Number(req.query.page) || 1
-    const keyword = req.query.search
-        ? {
-            name: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
-        }
-        : {}
+    let keyword
+    if(isNaN(parseInt(req.query.search)))
+    {
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {name:{$regex:req.query.search,$options:'i'}},
+                ]
+            }
+            : {}
+    }
+    else{
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {rfid:{$regex:req.query.search,$options:'i'}},
+                    {contact:parseInt(req.query.search)}
+
+                ]
+            }
+            : {}
+    }
+
 
     const count= await Member.countDocuments({...keyword})
     const members=await Member.find({...keyword})
@@ -49,15 +56,34 @@ const memberList=asyncHandler(async(req,res)=>{
 const memberTraining=asyncHandler(async(req,res)=>{
     const pageSize=10;
     const page = Number(req.query.page) || 1
-    const keyword = req.query.search
+
+    let keyword
+
+    if(isNaN(parseInt(req.query.search)))
+    {
+        keyword = req.query.search
         ? {
-            name: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
+            $or:[
+                {name:{$regex:req.query.search,$options:'i'}},
+            ],
             training:true,
         }
         : {training:true}
+    }
+    else{
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {rfid:{$regex:req.query.search,$options:'i'}},
+                    {contact:parseInt(req.query.search)}
+                ],
+                training:true,
+            }
+            : {training:true}
+    }
+
+
+
 
     const count= await Member.countDocuments({...keyword})
     const members=await Member.find({...keyword})
@@ -68,18 +94,72 @@ const memberTraining=asyncHandler(async(req,res)=>{
 })
 
 
+const femaleMembers=asyncHandler(async(req,res)=>{
+    const pageSize=10;
+    const page = Number(req.query.page) || 1
+    let keyword
+    console.log(req.query.search)
+    if(isNaN(parseInt(req.query.search)))
+    {
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {name:{$regex:req.query.search,$options:'i'}},
+                ],
+                gender:"female"
+            }
+            : {gender:"female"}
+    }
+    else{
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {rfid:{$regex:req.query.search,$options:'i'}},
+                    {contact:parseInt(req.query.search)}
+                ],
+                gender:"female",
+            }
+            : {gender:"female"}
+    }
+
+
+    const count= await Member.countDocuments({...keyword})
+    const members=await Member.find({...keyword})
+    .limit(pageSize)
+    .skip(pageSize*(page-1))
+
+    res.json({ members, page, pages: Math.ceil(count / pageSize) })
+})
+
+
+
 const memberCardio=asyncHandler(async(req,res)=>{
     const pageSize=10;
     const page = Number(req.query.page) || 1
-    const keyword = req.query.search
-        ? {
-            name: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
-            membership:"Cardio",
-        }
-        : {membership:"Cardio"}
+    let keyword
+    if(isNaN(parseInt(req.query.search)))
+    {
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {name:{$regex:req.query.search,$options:'i'}},
+                ],
+                training:true,
+            }
+            : {membership:"Cardio"}
+    }
+    else{
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {rfid:{$regex:req.query.search,$options:'i'}},
+                    {contact:parseInt(req.query.search)}
+                ],
+                membership:"Cardio",
+            }
+            : {membership:"Cardio"}
+    }
+
 
     const count= await Member.countDocuments({...keyword})
     const members=await Member.find({...keyword})
@@ -93,15 +173,30 @@ const memberCardio=asyncHandler(async(req,res)=>{
 const memberWeight=asyncHandler(async(req,res)=>{
     const pageSize=10;
     const page = Number(req.query.page) || 1
-    const keyword = req.query.search
-        ? {
-            name: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
-            membership:"Weight Training",
-        }
-        : {membership:"Weight Training"}
+    let keyword
+    if(isNaN(parseInt(req.query.search)))
+    {
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {name:{$regex:req.query.search,$options:'i'}},
+                ],
+                training:true,
+            }
+            : { membership:"Weight Training"}
+    }
+    else{
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {rfid:{$regex:req.query.search,$options:'i'}},
+                    {contact:parseInt(req.query.search)}
+                ],
+                membership:"Weight Training",
+            }
+            : { membership:"Weight Training"}
+    }
+
 
     const count= await Member.countDocuments({...keyword})
     const members=await Member.find({...keyword})
@@ -115,15 +210,30 @@ const memberWeight=asyncHandler(async(req,res)=>{
 const memberCardioWeight=asyncHandler(async(req,res)=>{
     const pageSize=10;
     const page = Number(req.query.page) || 1
-    const keyword = req.query.search
-        ? {
-            name: {
-                $regex: req.query.search,
-                $options: 'i',
-            },
-            membership:"Cardio and weight Training",
-        }
-        : {membership:"Cardio and weight Training"}
+
+    let keyword
+    if(isNaN(parseInt(req.query.search)))
+    {
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {name:{$regex:req.query.search,$options:'i'}},
+                ],
+                training:true,
+            }
+            : { membership:"Cardio and weight Training"}
+    }
+    else{
+        keyword = req.query.search
+            ? {
+                $or:[
+                    {rfid:{$regex:req.query.search,$options:'i'}},
+                    {contact:parseInt(req.query.search)}
+                ],
+                membership:"Cardio and weight Training",
+            }
+            : {membership:"Cardio and weight Training"}
+    }
 
     const count= await Member.countDocuments({...keyword})
     const members=await Member.find({...keyword})
@@ -237,4 +347,4 @@ const allMembers =asyncHandler(async(req,res)=>{
 
 
 
-export {addMember,memberCount,memberList,getMember,deleteMember,updateMember,addAttendance,memberTraining,memberCardio,memberWeight,memberCardioWeight,allMembers}
+export {addMember,memberCount,memberList,getMember,deleteMember,updateMember,addAttendance,memberTraining,memberCardio,memberWeight,memberCardioWeight,allMembers,femaleMembers}

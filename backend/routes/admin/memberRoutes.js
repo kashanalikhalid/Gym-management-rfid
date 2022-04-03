@@ -11,7 +11,8 @@ import {
     memberWeight,
     memberCardio,
     memberCardioWeight,
-    allMembers
+    allMembers,
+    femaleMembers
 } from '../../controllers/memberController.js'
 const router =express.Router()
 
@@ -28,4 +29,6 @@ router.route('/memberprofile/:id').get(getMember)
 router.route('/attendance').post(addAttendance)
 router.route('/membercount').get(memberCount)
 router.route('/allmembers').get(allMembers)
+router.route('/females').get(femaleMembers)
+
 export default router
