@@ -61,7 +61,7 @@ const memberSchema =mongoose.Schema({
     },
     discount:{
         type:Number,
-        required:true
+        required:false
     },
     gender:{
         type:String,
