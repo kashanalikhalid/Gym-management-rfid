@@ -64,7 +64,7 @@ const verifyUser=asyncHandler(async(req,res)=>{
                     // }
                     else{
                         member.lastEntry = date;
-                        returnMember.allowed=false;
+                        returnMember.allowed=true;
                         console.log("last else false")
                     }
                 }
@@ -76,9 +76,15 @@ const verifyUser=asyncHandler(async(req,res)=>{
                 }
                 await member.save();
                 console.log(returnMember)
+                if (returnMember.allowed){
+                    
+                    serialPort.write("w");
+                    console.log("sending signal")
+                }
                 res.status(200).json(returnMember);
             }
             else if(req.query.type=="staff"){
+                serialPort.write("t");
                 console.log("Staff Allowed:true")
                 res.status(200).json({allowed:true});
             }

@@ -4,7 +4,7 @@ import express from 'express'
 import {notFound, errorHandler} from "./middleware/errorMiddleware.js";
 import SerialPort from 'serialport'
 let serialPort = new SerialPort("COM4", { baudRate: 9600 });
-
+import { verifyUser } from './controllers/fingerprintController.js';
 serialPort.on('open',function() {
     console.log('Serial Port ' + "COM4" + ' is opened.');
 });
@@ -39,6 +39,8 @@ connectDB();
 app.get('/',(req,res)=>{
 res.send('API is running')
 })
+
+app.get("/verifyUser", verifyUser)
 
 app.get('/:action',(req,res)=>{
     let action = req.params.action
