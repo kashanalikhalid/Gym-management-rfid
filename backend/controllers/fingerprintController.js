@@ -3,6 +3,7 @@ import Member from '../models/memberModel.js'
 import SerialPort from 'serialport'
 let serialPort = new SerialPort("COM4", { baudRate: 9600 });
 
+var clients = []
 
 const feeStatus=(date)=>{
     date= new Date(date)
@@ -25,6 +26,7 @@ const verifyUser=asyncHandler(async(req,res)=>{
         if (req.query.cnic==0){
             // res.status(200).json({data:"User Not found"})
             console.log("Cnic zero not found")
+            clients.forEach(client => client.res.write(`data: ${JSON.stringify({found:false})}\n\n`))
             res.sendStatus(200)
         }
        
@@ -46,13 +48,13 @@ const verifyUser=asyncHandler(async(req,res)=>{
                 }
 
                 if (days <= (31*member.months)) {
-                    if (member.lastEntry === null) {
-                        member.lastEntry = date;
-                        returnMember.allowed=true;
-                    } else if (date.getDate() !== lastEntry.getDate()) {
-                        member.lastEntry = date;
-                        returnMember.allowed=true;
-                    } 
+                    // if (member.lastEntry === null) {
+                    //     member.lastEntry = date;
+                    //     returnMember.allowed=true;
+                    // } else if (date.getDate() !== lastEntry.getDate()) {
+                    //     member.lastEntry = date;
+                    //     returnMember.allowed=true;
+                    // } 
                     // else if (hours > 2) {
                     //     returnMember.allowed=false;
                     //     returnMember.reason="time"
@@ -62,15 +64,26 @@ const verifyUser=asyncHandler(async(req,res)=>{
                     //     member.lastEntry = date;
                     //     returnMember.allowed=true;
                     // }
-                    else{
-                        member.lastEntry = date;
-                        returnMember.allowed=true;
-                        console.log("last else false")
+                    // else{
+                    //     member.lastEntry = date;
+                    //     returnMember.allowed=true;
+                    //     console.log("last else false")
+                    // }
+                    member.lastEntry=date
+                    returnMember.allowed = true
+                    returnMember.found = true
+                    if (days>=27){
+                        returnMember.warning = true
                     }
+                    else{
+                        returnMember.warning = false
+                    }
+
                 }
                 else {
                     returnMember.allowed=false;
                     returnMember.reason="fee"
+                    returnMember.found = true
 
 
                 }
@@ -80,11 +93,14 @@ const verifyUser=asyncHandler(async(req,res)=>{
                     
                     serialPort.write("w");
                     console.log("sending signal")
+
                 }
+                clients.forEach(client => client.res.write(`data: ${JSON.stringify(returnMember)}\n\n`))
                 res.status(200).json(returnMember);
             }
             else if(req.query.type=="staff"){
-                serialPort.write("t");
+                clients.forEach(client => client.res.write(`data: ${JSON.stringify({staff:true})}\n\n`))
+                serialPort.write("w");
                 console.log("Staff Allowed:true")
                 res.status(200).json({allowed:true});
             }
@@ -96,4 +112,19 @@ const verifyUser=asyncHandler(async(req,res)=>{
     
 })
 
-export {verifyUser}
+
+
+const notify=asyncHandler(async(req,res)=>{
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+
+    const clientId = Date.now()
+    clients.push({id:clientId, res})
+
+    req.on('close', ()=> {
+        clients = clients.filter(client=> client.id!==clientId)
+    })
+
+})
+export {verifyUser, notify}
