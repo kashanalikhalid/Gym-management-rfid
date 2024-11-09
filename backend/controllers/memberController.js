@@ -12,9 +12,66 @@ const getFormattedDate=(date)=>{
 const addMember =asyncHandler(async(req,res)=>{
     let data=req.body;
     let member= new Member(data)
-     member=await member.save();
+    member=await member.save();
+
+    const savedMember = await Member.findOne({cnic: {$eq: data.cnic}})
+    let feedata = {
+        member: savedMember._id,
+        name: savedMember.name,
+        amount: savedMember.fee,
+        date: getFormattedDate(savedMember.feeDate)
+    }
+    let fee = await new Fee(feedata)
+    fee = await fee.save()
     res.status(201).json(member);
 
+})
+
+const updateMember=asyncHandler(async(req,res)=>{
+    const member= await Member.findById(req.params.id)
+    console.log(getFormattedDate(req.body.feeDate))
+    console.log(getFormattedDate(member.feeDate))
+
+    if(req.body.feeDate)
+    {
+        if(getFormattedDate(member.feeDate)!=getFormattedDate(req.params.feeDate))
+        {
+            let data={
+            member:member._id,
+            name:member.name,
+            amount:member.fee,
+            date:getFormattedDate(req.body.feeDate),
+        }
+            let fee=await new Fee(data)
+            fee= await fee.save()
+        }
+    }
+    if(member)
+    {
+        member.contact=req.body.contact||member.contact
+        member.name=req.body.name||member.name
+        member.city=req.body.city||member.city
+        member.address=req.body.address||member.address
+        member.cnic=req.body.cnic||member.cnic
+        member.registrationDate=req.body.registrationDate||member.registrationDate
+        member.fee=req.body.fee||member.fee
+        member.feeDate=req.body.feeDate||member.feeDate
+        member.registration=req.body.registration||member.registration
+        member.membership=req.body.membership||member.membership
+        member.rfid=req.body.rfid || member.rfid
+        member.months=req.body.months||member.months
+        member.group=req.body.group||member.group
+        member.training=req.body.training
+        member.discount=req.body.discount
+        member.trainingFee=req.body.trainingFee||member.trainingFee
+
+        const updatedMember=await member.save()
+    res.json(updatedMember)
+    }
+    else{
+        res.status(404);
+        throw new Error('Member not found')
+    }
 })
 
 
@@ -282,52 +339,7 @@ const memberCount=asyncHandler (async(req,res)=>{
     res.json({count,training,cardio,strength,strengthCardio})
 })
 
-const updateMember=asyncHandler(async(req,res)=>{
-    const member= await Member.findById(req.params.id)
-    console.log(getFormattedDate(req.body.feeDate))
-    console.log(getFormattedDate(member.feeDate))
 
-    if(req.body.feeDate)
-    {
-        if(getFormattedDate(member.feeDate)!=getFormattedDate(req.params.feeDate))
-        {
-            let data={
-            member:member._id,
-            name:member.name,
-            amount:member.fee,
-            date:getFormattedDate(req.body.feeDate),
-        }
-            let fee=await new Fee(data)
-            fee= await fee.save()
-        }
-    }
-    if(member)
-    {
-        member.contact=req.body.contact||member.contact
-        member.name=req.body.name||member.name
-        member.city=req.body.city||member.city
-        member.address=req.body.address||member.address
-        member.cnic=req.body.cnic||member.cnic
-        member.registrationDate=req.body.registrationDate||member.registrationDate
-        member.fee=req.body.fee||member.fee
-        member.feeDate=req.body.feeDate||member.feeDate
-        member.registration=req.body.registration||member.registration
-        member.membership=req.body.membership||member.membership
-        member.rfid=req.body.rfid || member.rfid
-        member.months=req.body.months||member.months
-        member.group=req.body.group||member.group
-        member.training=req.body.training
-        member.discount=req.body.discount
-        member.trainingFee=req.body.trainingFee||member.trainingFee
-
-        const updatedMember=await member.save()
-    res.json(updatedMember)
-    }
-    else{
-        res.status(404);
-        throw new Error('Member not found')
-    }
-})
 
 const addAttendance =asyncHandler(async(req,res)=>{
     const data=req.body;
