@@ -1,7 +1,23 @@
 import asyncHandler from "express-async-handler";
 import Fee from '../models/feeModel.js'
 import Member from "../models/memberModel.js";
+import { getMonth, getYear, format } from "date-fns";
 
+
+const feeMonthly = asyncHandler(async(req,res)=>{
+    const selectedDate = new Date(req.query.date)
+
+    var firstDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    var lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+
+    const fees = await Fee.find({createdAt: {$gte: firstDay, $lte: lastDay}})
+    let total = 0
+    fees.forEach((fee)=>{
+        total = total + fee.amount
+    })
+
+    res.status(200).json({rev:total})
+})
 
 
 const feeList=asyncHandler(async(req,res)=>{
@@ -25,4 +41,4 @@ const feeList=asyncHandler(async(req,res)=>{
     res.json({ fees, page, pages: Math.ceil(count / pageSize) })
 })
 
-export {feeList}
+export {feeList, feeMonthly}
