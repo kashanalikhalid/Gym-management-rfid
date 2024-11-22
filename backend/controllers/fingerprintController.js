@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Member from '../models/memberModel.js'
 import SerialPort from 'serialport'
 let serialPort = new SerialPort("COM4", { baudRate: 9600 });
+import Attendance from '../models/attendanceModel.js'
 
 var clients = []
 
@@ -39,7 +40,7 @@ const verifyUser=asyncHandler(async(req,res)=>{
 
                 const days = feeStatus(member.feeDate)
                 const date = new Date()
-                let lastEntry;
+                let lastEntry = null
                 let hours;
 
                 if (member.lastEntry !== null) {
@@ -93,9 +94,26 @@ const verifyUser=asyncHandler(async(req,res)=>{
                     
                     serialPort.write("w");
                     console.log("sending signal")
-
                 }
                 clients.forEach(client => client.res.write(`data: ${JSON.stringify(returnMember)}\n\n`))
+
+                
+
+                if ( ((  new Date(lastEntry.toDateString()) < new Date(new Date().toDateString())  ) || (lastEntry==null) )  ){
+                    console.log("if running")
+
+                    const attendanceMember= {date:`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`,
+                        name:member.name,
+                        reg:member.id,
+                        rfid:member.cnic,
+                        time:new Date(new Date().setHours(new Date().getHours() + 5))
+
+                    }
+                    console.log("attendance member", attendanceMember)
+                    const attendance= new Attendance(attendanceMember) 
+                    const createdAttendance =await attendance.save();
+                }
+                
                 res.status(200).json(returnMember);
             }
             else if(req.query.type=="staff"){
